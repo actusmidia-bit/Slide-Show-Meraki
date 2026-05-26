@@ -317,6 +317,48 @@
       transform: scale(1.5);
     }
 
+    /* ── Botão de música ── */
+    #music-btn {
+      position: fixed;
+      bottom: 52px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--olive-dark);
+      border: 1px solid rgba(219,189,116,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0.55;
+    }
+
+    #music-btn:hover { opacity: 1; transform: scale(1.1); }
+
+    #music-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: var(--gold);
+      flex-shrink: 0;
+    }
+
+    #music-btn.muted svg.icon-on  { display: none; }
+    #music-btn.muted svg.icon-off { display: block; }
+    #music-btn svg.icon-off { display: none; }
+
+    /* iframe do YouTube/Spotify — oculto */
+    #music-frame {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      bottom: 0; right: 0;
+    }
+
     /* ── Loading / error ── */
     #status-msg {
       position: absolute;
@@ -356,9 +398,25 @@
 
 </div>
 
+<!-- Áudio local (fallback quando MUSIC_URL está vazio) -->
 <audio id="bgMusic" loop>
   <source src="music/ambiente.mp3" type="audio/mpeg">
 </audio>
+
+<!-- Player oculto para YouTube / Spotify (preenchido via JS) -->
+<div id="music-frame"></div>
+
+<!-- Botão flutuante mute/unmute -->
+<button id="music-btn" title="Música" aria-label="Música">
+  <!-- ícone: tocando -->
+  <svg class="icon-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/>
+  </svg>
+  <!-- ícone: mudo -->
+  <svg class="icon-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06A8.99 8.99 0 0 0 17.73 18l1.73 1.73L21 18.46 5.54 3 4.27 3zM12 4 9.91 6.09 12 8.18V4z"/>
+  </svg>
+</button>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
@@ -368,6 +426,13 @@
 const SHEET_CSV_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTdnAuvcKiaqtCDTQ-Llbo97-IhVdkyugbdsxMz8gYkeJWh_8-7LX-Bocbb0o2fnbTGIwBBU7m5XQ_o/pub?gid=0&single=true&output=csv';
 const SLIDE_SECONDS   = 12;
 const REFRESH_MINUTES = 15;
+
+//  MÚSICA  —  cole a URL de uma playlist do YouTube ou Spotify, ou deixe vazio para usar o MP3 local
+//  Exemplos:
+//    YouTube:  'https://www.youtube.com/playlist?list=PLxxxx'
+//    Spotify:  'https://open.spotify.com/playlist/xxxx'
+//    MP3 local: '' (arquivo em music/ambiente.mp3)
+const MUSIC_URL = '';
 
 // ═══════════════════════════════════════════════════════════════════
 //  ESTRUTURA DA PLANILHA (linha 1 = cabeçalho):
@@ -499,12 +564,77 @@ function startAuto() {
   autoTimer = setInterval(() => goTo(current + 1), SLIDE_MS);
 }
 
+function buildMusicEmbedUrl(url) {
+  if (!url) return null;
+
+  // YouTube playlist: extrai list=XXXX
+  const ytList = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+  if (ytList || url.includes('youtube.com') || url.includes('youtu.be')) {
+    const listId = ytList ? ytList[1] : '';
+    const videoId = url.match(/[?&]v=([a-zA-Z0-9_-]+)/)?.[1] || '';
+    const base = videoId
+      ? `https://www.youtube.com/embed/${videoId}?`
+      : `https://www.youtube.com/embed/?`;
+    const params = new URLSearchParams({
+      autoplay: '1', loop: '1', controls: '0',
+      disablekb: '1', fs: '0', modestbranding: '1',
+      ...(listId ? { list: listId, listType: 'playlist' } : {}),
+    });
+    return base + params.toString();
+  }
+
+  // Spotify playlist/album
+  const spMatch = url.match(/spotify\.com\/(playlist|album|track)\/([a-zA-Z0-9]+)/);
+  if (spMatch) {
+    return `https://open.spotify.com/embed/${spMatch[1]}/${spMatch[2]}?autoplay=1&utm_source=oembed`;
+  }
+
+  return null;
+}
+
 function tryMusic() {
+  const btn   = document.getElementById('music-btn');
+  const frame = document.getElementById('music-frame');
   const audio = document.getElementById('bgMusic');
-  audio.volume = 0.3;
-  const play = () => audio.play().catch(() => {});
-  play();
-  document.addEventListener('click', play, { once: true });
+  let muted   = false;
+
+  const embedUrl = buildMusicEmbedUrl(MUSIC_URL);
+
+  if (embedUrl) {
+    // Cria iframe para YouTube ou Spotify
+    const iframe = document.createElement('iframe');
+    iframe.src             = embedUrl;
+    iframe.allow           = 'autoplay; encrypted-media';
+    iframe.style.cssText   = 'width:1px;height:1px;opacity:0;position:fixed;bottom:0;right:0;pointer-events:none;border:none;';
+    frame.appendChild(iframe);
+
+    btn.addEventListener('click', () => {
+      muted = !muted;
+      btn.classList.toggle('muted', muted);
+      // Para YouTube: postMessage; para Spotify: sem API fácil — esconde/mostra
+      iframe.style.opacity = muted ? '0' : '0';
+      try {
+        if (embedUrl.includes('youtube')) {
+          iframe.contentWindow.postMessage(
+            JSON.stringify({ event: 'command', func: muted ? 'mute' : 'unMute' }), '*'
+          );
+        }
+      } catch (_) {}
+    });
+
+  } else {
+    // Fallback: MP3 local
+    audio.volume = 0.3;
+    const playAudio = () => audio.play().catch(() => {});
+    playAudio();
+    document.addEventListener('click', playAudio, { once: true });
+
+    btn.addEventListener('click', () => {
+      muted = !muted;
+      btn.classList.toggle('muted', muted);
+      muted ? audio.pause() : audio.play().catch(() => {});
+    });
+  }
 }
 
 async function loadData() {
