@@ -192,65 +192,25 @@
       margin-top: 1px;
     }
 
-    /* ── Fotos antes / depois ── */
-    .photos-wrap {
+    /* ── Foto (montagem antes/depois) ── */
+    .photo-wrap {
       flex: 1;
       min-height: 0;
-      display: flex;
-      gap: 12px;
       padding: 0 48px;
-      align-items: stretch;
-    }
-
-    .photo-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .photo-label {
-      text-align: center;
-      font-size: 0.6rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--olive-mid);
-      padding: 4px 0 6px;
-      flex-shrink: 0;
-    }
-
-    .photo-frame {
-      flex: 1;
-      min-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      border-radius: 5px;
-      background: var(--border-light);
-      position: relative;
     }
 
-    .photo-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .photo-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 6px;
       display: block;
-    }
-
-    .photo-frame.single {
-      /* Quando só existe foto depois, ocupa toda a largura */
-    }
-
-    /* Divisor entre as fotos */
-    .photos-divider {
-      width: 1px;
-      background: linear-gradient(180deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
-      opacity: 0.5;
-      flex-shrink: 0;
-      align-self: stretch;
-      margin: 8px 0;
+      box-shadow: 0 4px 32px rgba(76,75,10,0.10), 0 1px 4px rgba(76,75,10,0.06);
     }
 
     /* ── Meta info ── */
@@ -412,8 +372,8 @@ const REFRESH_MINUTES = 15;
 // ═══════════════════════════════════════════════════════════════════
 //  ESTRUTURA DA PLANILHA (linha 1 = cabeçalho):
 //  A: Profissional  |  B: Idade  |  C: Queixa principal
-//  D: Protocolo     |  E: URL Foto Antes  |  F: URL Foto Depois
-//  G: Ativo (TRUE / FALSE — FALSE oculta o caso)
+//  D: Protocolo     |  E: URL da Montagem (Drive)
+//  F: Ativo (TRUE / FALSE — FALSE oculta o caso)
 // ═══════════════════════════════════════════════════════════════════
 
 const ESPECIALIDADES = {
@@ -424,7 +384,11 @@ const ESPECIALIDADES = {
 };
 
 function getEspecialidade(nome) {
-  return ESPECIALIDADES[nome.toLowerCase().trim()] || 'Profissional';
+  const key = nome.toLowerCase().trim().replace(/\./g, '').replace(/\s+/g, ' ');
+  for (const [k, v] of Object.entries(ESPECIALIDADES)) {
+    if (key.includes(k.replace(/\./g, '').replace(/\s+/g, ' '))) return v;
+  }
+  return 'Profissional';
 }
 
 // ─────────────────────────────────────────────
@@ -457,15 +421,14 @@ function parseCSV(raw) {
 
 function buildSlides(rows) {
   const data = rows
-    .filter(r => (r[6] || 'TRUE').toUpperCase() !== 'FALSE' && (r[4] || r[5]))
+    .filter(r => (r[5] || 'TRUE').toUpperCase() !== 'FALSE' && r[4])
     .map(r => ({
-      profissional: r[0] || '',
+      profissional:  r[0] || '',
       especialidade: getEspecialidade(r[0] || ''),
-      idade:        r[1] || '—',
-      queixa:       r[2] || '',
-      protocolo:    r[3] || '',
-      antes:        driveImg(r[4]),
-      depois:       driveImg(r[5]),
+      idade:         r[1] || '—',
+      queixa:        r[2] || '',
+      protocolo:     r[3] || '',
+      montagem:      driveImg(r[4]),
     }));
 
   if (!data.length) return false;
@@ -476,26 +439,6 @@ function buildSlides(rows) {
   dots.innerHTML = '';
 
   data.forEach((caso, i) => {
-    const hasAntes  = !!caso.antes;
-    const hasDepois = !!caso.depois;
-
-    const fotosHTML = hasAntes && hasDepois
-      ? `<div class="photo-col">
-           <div class="photo-label">Antes</div>
-           <div class="photo-frame"><img src="${caso.antes}" alt="Antes"></div>
-         </div>
-         <div class="photos-divider"></div>
-         <div class="photo-col">
-           <div class="photo-label">Depois</div>
-           <div class="photo-frame"><img src="${caso.depois}" alt="Depois"></div>
-         </div>`
-      : `<div class="photo-col">
-           <div class="photo-label">${hasDepois ? 'Resultado' : 'Antes'}</div>
-           <div class="photo-frame photo-frame-single">
-             <img src="${hasDepois ? caso.depois : caso.antes}" alt="${caso.queixa}">
-           </div>
-         </div>`;
-
     const div = document.createElement('div');
     div.className = 'slide' + (i === 0 ? ' active' : '');
     div.innerHTML = `
@@ -507,7 +450,9 @@ function buildSlides(rows) {
         </div>
         <div class="prof-line right"></div>
       </div>
-      <div class="photos-wrap">${fotosHTML}</div>
+      <div class="photo-wrap">
+        <img src="${caso.montagem}" alt="${caso.queixa}">
+      </div>
       <div class="meta">
         <div class="meta-ornament"><div class="meta-ornament-diamond"></div></div>
         <div class="meta-tags">
