@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resultados — Dra. Mariana Leite</title>
+  <title>Meraki — Resultados</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -17,7 +17,6 @@
       --offwhite:     #F3EFE8;
       --beige:        #C8C4C2;
       --bg:           #F3EFE8;
-      --surface:      #FDFCF9;
       --border:       #C8C4C2;
       --border-light: #E0DDD8;
       --text:         #2A2A1A;
@@ -29,7 +28,7 @@
       height: 100%;
       overflow: hidden;
       background: var(--bg);
-      font-family: 'Jost', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Jost', 'Segoe UI', system-ui, sans-serif;
       color: var(--text);
     }
 
@@ -40,66 +39,95 @@
       height: 100vh;
     }
 
-    /* ── Header ── */
+    /* ══════════════════════════════
+       HEADER — Identidade Meraki
+    ══════════════════════════════ */
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 56px;
-      min-height: 68px;
+      padding: 0 56px;
+      height: 72px;
       background: var(--olive-dark);
-      border-bottom: 1px solid rgba(219,189,116,0.25);
       position: relative;
+      flex-shrink: 0;
     }
 
     header::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 56px;
-      right: 56px;
+      bottom: 0; left: 0; right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0.5;
+      background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+      opacity: 0.4;
     }
 
-    .header-left {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Monograma "M" estilizado */
+    .brand-monogram {
+      width: 42px;
+      height: 42px;
+      border: 1.5px solid rgba(219,189,116,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .brand-monogram::before {
+      content: 'M';
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .brand-text {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 3px;
-      flex-shrink: 0;
+      gap: 2px;
     }
 
-    .clinic-name {
+    .brand-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.95rem;
-      font-weight: 400;
-      letter-spacing: 0.06em;
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--offwhite);
-      white-space: nowrap;
+      line-height: 1;
     }
 
-    .clinic-title {
-      font-size: 0.68rem;
+    .brand-sub {
+      font-size: 0.6rem;
       font-weight: 300;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
       color: var(--gold);
-      text-transform: uppercase;
-      opacity: 0.85;
+      opacity: 0.8;
     }
 
-    .tagline {
-      font-size: 0.68rem;
+    .brand-tagline {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.85rem;
       font-weight: 300;
-      letter-spacing: 0.1em;
+      font-style: italic;
       color: var(--beige);
-      text-transform: uppercase;
-      opacity: 0.7;
+      letter-spacing: 0.04em;
+      opacity: 0.75;
     }
 
-    /* ── Slideshow area ── */
+    /* ══════════════════════════════
+       SLIDESHOW
+    ══════════════════════════════ */
     #slideshow {
       position: relative;
       overflow: hidden;
@@ -111,9 +139,6 @@
       inset: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 64px 24px;
       opacity: 0;
       transition: opacity 1s ease;
       pointer-events: none;
@@ -124,51 +149,141 @@
       pointer-events: auto;
     }
 
-    /* ── Photo ── */
-    .photo-wrap {
-      flex: 1;
-      min-height: 0;
-      width: 100%;
-      max-width: 1100px;
+    /* ── Badge do profissional ── */
+    .prof-banner {
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 14px;
+      padding: 10px 32px 8px;
+      flex-shrink: 0;
     }
 
-    .photo-wrap img {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 6px;
-      display: block;
-      background: var(--border-light);
-      box-shadow: 0 4px 32px rgba(76,75,10,0.10), 0 1px 4px rgba(76,75,10,0.06);
+    .prof-line {
+      flex: 1;
+      max-width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--olive-mid));
     }
 
-    /* ── Divider ornament ── */
-    .meta-divider {
+    .prof-line.right {
+      background: linear-gradient(90deg, var(--olive-mid), transparent);
+    }
+
+    .prof-info {
+      text-align: center;
+    }
+
+    .prof-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--olive-dark);
+      text-transform: uppercase;
+    }
+
+    .prof-specialty {
+      font-size: 0.62rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--olive-mid);
+      margin-top: 1px;
+    }
+
+    /* ── Fotos antes / depois ── */
+    .photos-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 12px;
+      padding: 0 48px;
+      align-items: stretch;
+    }
+
+    .photo-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .photo-label {
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--olive-mid);
+      padding: 4px 0 6px;
+      flex-shrink: 0;
+    }
+
+    .photo-frame {
+      flex: 1;
+      min-height: 0;
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin: 18px auto 14px;
-      width: 180px;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 5px;
+      background: var(--border-light);
+      position: relative;
     }
 
-    .meta-divider::before,
-    .meta-divider::after {
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-frame.single {
+      /* Quando só existe foto depois, ocupa toda a largura */
+    }
+
+    /* Divisor entre as fotos */
+    .photos-divider {
+      width: 1px;
+      background: linear-gradient(180deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+      opacity: 0.5;
+      flex-shrink: 0;
+      align-self: stretch;
+      margin: 8px 0;
+    }
+
+    /* ── Meta info ── */
+    .meta {
+      text-align: center;
+      padding: 10px 48px 14px;
+      flex-shrink: 0;
+    }
+
+    .meta-ornament {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 140px;
+      margin: 0 auto 10px;
+    }
+
+    .meta-ornament::before,
+    .meta-ornament::after {
       content: '';
       flex: 1;
       height: 1px;
+    }
+
+    .meta-ornament::before {
       background: linear-gradient(90deg, transparent, var(--gold));
     }
 
-    .meta-divider::after {
+    .meta-ornament::after {
       background: linear-gradient(90deg, var(--gold), transparent);
     }
 
-    .meta-divider-icon {
+    .meta-ornament-diamond {
       width: 5px;
       height: 5px;
       background: var(--gold);
@@ -176,27 +291,19 @@
       flex-shrink: 0;
     }
 
-    /* ── Meta info ── */
-    .meta {
-      text-align: center;
-      width: 100%;
-      max-width: 900px;
-    }
-
     .meta-tags {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .tag {
       background: var(--tag-bg);
       border-radius: 2px;
-      padding: 5px 16px;
-      font-size: 0.73rem;
-      font-weight: 400;
+      padding: 4px 14px;
+      font-size: 0.7rem;
       color: var(--olive-mid);
       border: 1px solid var(--border-light);
       letter-spacing: 0.06em;
@@ -210,20 +317,10 @@
 
     .queixa {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 1.2rem;
-      font-weight: 400;
+      font-size: 1.05rem;
       font-style: italic;
       color: var(--olive-dark);
-      margin-bottom: 6px;
       letter-spacing: 0.02em;
-    }
-
-    .protocolo {
-      font-size: 0.75rem;
-      font-weight: 300;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     /* ── Progress bar ── */
@@ -279,11 +376,14 @@
 <div id="app">
 
   <header>
-    <div class="header-left">
-      <span class="clinic-name">Dra. Mariana Leite</span>
-      <span class="clinic-title">Medicina Estética</span>
+    <div class="brand">
+      <div class="brand-monogram"></div>
+      <div class="brand-text">
+        <span class="brand-name">Meraki</span>
+        <span class="brand-sub">Clínica de Estética</span>
+      </div>
     </div>
-    <span class="tagline">Resultados reais &middot; Transformações verdadeiras</span>
+    <span class="brand-tagline">Beleza que cura, preserva e eleva.</span>
   </header>
 
   <div id="slideshow">
@@ -296,50 +396,50 @@
 
 </div>
 
-<!--
-  Coloque o arquivo de música em: recepcao/music/ambiente.mp3
-  Qualquer MP3 royalty-free de spa/ambiente funciona.
--->
 <audio id="bgMusic" loop>
   <source src="music/ambiente.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  CONFIGURAÇÃO  —  edite SOMENTE estas três linhas
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO  —  edite SOMENTE estas linhas
+// ═══════════════════════════════════════════════════════════════════
 
-//  1. URL CSV da sua planilha do Google Sheets
-//     Planilha → Arquivo → Compartilhar → Publicar na web → CSV → Copiar link
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTdnAuvcKiaqtCDTQ-Llbo97-IhVdkyugbdsxMz8gYkeJWh_8-7LX-Bocbb0o2fnbTGIwBBU7m5XQ_o/pub?gid=0&single=true&output=csv';
-
-//  2. Segundos que cada slide fica na tela
-const SLIDE_SECONDS = 12;
-
-//  3. Intervalo para buscar novos casos (em minutos)
+const SHEET_CSV_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTdnAuvcKiaqtCDTQ-Llbo97-IhVdkyugbdsxMz8gYkeJWh_8-7LX-Bocbb0o2fnbTGIwBBU7m5XQ_o/pub?gid=0&single=true&output=csv';
+const SLIDE_SECONDS   = 12;
 const REFRESH_MINUTES = 15;
 
-// ═══════════════════════════════════════════════════════
-//  Estrutura esperada da planilha (linha 1 = cabeçalho):
-//  A: Idade  |  B: Queixa principal  |  C: Protocolo
-//  D: URL Foto Antes (Google Drive)  |  E: URL Foto Depois
-//  F: Ativo (TRUE / FALSE — deixe FALSE para ocultar)
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+//  ESTRUTURA DA PLANILHA (linha 1 = cabeçalho):
+//  A: Profissional  |  B: Idade  |  C: Queixa principal
+//  D: Protocolo     |  E: URL Foto Antes  |  F: URL Foto Depois
+//  G: Ativo (TRUE / FALSE — FALSE oculta o caso)
+// ═══════════════════════════════════════════════════════════════════
 
+const ESPECIALIDADES = {
+  'dra. mariana leite': 'Biomédica Esteta',
+  'dra. bruna noriega': 'Biomédica Esteta',
+  'tatieli araujo':     'Esteticista',
+  'tatieli araújo':     'Esteticista',
+};
+
+function getEspecialidade(nome) {
+  return ESPECIALIDADES[nome.toLowerCase().trim()] || 'Profissional';
+}
+
+// ─────────────────────────────────────────────
 let slides = [], current = 0, autoTimer = null;
 const SLIDE_MS = SLIDE_SECONDS * 1000;
 
-// Converte link de compartilhamento do Drive em link de imagem direta
 function driveImg(url) {
   if (!url) return '';
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : url;
 }
 
-// Parse de CSV simples (lida com vírgulas dentro de aspas)
 function parseCSV(raw) {
   const rows = [];
-  const lines = raw.trim().split(/\r?\n/).slice(1); // pula cabeçalho
+  const lines = raw.trim().split(/\r?\n/).slice(1);
   for (const line of lines) {
     const cols = [];
     let cur = '', inQ = false;
@@ -357,31 +457,59 @@ function parseCSV(raw) {
 
 function buildSlides(rows) {
   const data = rows
-    .filter(r => (r[4] || 'TRUE').toUpperCase() !== 'FALSE' && r[3])
+    .filter(r => (r[6] || 'TRUE').toUpperCase() !== 'FALSE' && (r[4] || r[5]))
     .map(r => ({
-      idade:     r[0] || '—',
-      queixa:    r[1] || '',
-      protocolo: r[2] || '',
-      imagem:    driveImg(r[3])
+      profissional: r[0] || '',
+      especialidade: getEspecialidade(r[0] || ''),
+      idade:        r[1] || '—',
+      queixa:       r[2] || '',
+      protocolo:    r[3] || '',
+      antes:        driveImg(r[4]),
+      depois:       driveImg(r[5]),
     }));
 
   if (!data.length) return false;
 
   const ss   = document.getElementById('slideshow');
   const dots = document.getElementById('dots');
-
   ss.querySelectorAll('.slide').forEach(el => el.remove());
   dots.innerHTML = '';
 
   data.forEach((caso, i) => {
+    const hasAntes  = !!caso.antes;
+    const hasDepois = !!caso.depois;
+
+    const fotosHTML = hasAntes && hasDepois
+      ? `<div class="photo-col">
+           <div class="photo-label">Antes</div>
+           <div class="photo-frame"><img src="${caso.antes}" alt="Antes"></div>
+         </div>
+         <div class="photos-divider"></div>
+         <div class="photo-col">
+           <div class="photo-label">Depois</div>
+           <div class="photo-frame"><img src="${caso.depois}" alt="Depois"></div>
+         </div>`
+      : `<div class="photo-col">
+           <div class="photo-label">${hasDepois ? 'Resultado' : 'Antes'}</div>
+           <div class="photo-frame photo-frame-single">
+             <img src="${hasDepois ? caso.depois : caso.antes}" alt="${caso.queixa}">
+           </div>
+         </div>`;
+
     const div = document.createElement('div');
     div.className = 'slide' + (i === 0 ? ' active' : '');
     div.innerHTML = `
-      <div class="photo-wrap">
-        <img src="${caso.imagem}" alt="${caso.queixa}">
+      <div class="prof-banner">
+        <div class="prof-line"></div>
+        <div class="prof-info">
+          <div class="prof-name">${caso.profissional}</div>
+          <div class="prof-specialty">${caso.especialidade}</div>
+        </div>
+        <div class="prof-line right"></div>
       </div>
+      <div class="photos-wrap">${fotosHTML}</div>
       <div class="meta">
-        <div class="meta-divider"><div class="meta-divider-icon"></div></div>
+        <div class="meta-ornament"><div class="meta-ornament-diamond"></div></div>
         <div class="meta-tags">
           <span class="tag"><strong>Idade:</strong> ${caso.idade} anos</span>
           <span class="tag"><strong>Protocolo:</strong> ${caso.protocolo}</span>
@@ -403,15 +531,11 @@ function goTo(idx) {
   const allSlides = document.querySelectorAll('.slide');
   const allDots   = document.querySelectorAll('.dot');
   if (!allSlides.length) return;
-
   allSlides[current]?.classList.remove('active');
   allDots[current]?.classList.remove('active');
-
   current = ((idx % slides.length) + slides.length) % slides.length;
-
   allSlides[current]?.classList.add('active');
   allDots[current]?.classList.add('active');
-
   animateProgress();
 }
 
@@ -435,24 +559,16 @@ function tryMusic() {
   audio.volume = 0.3;
   const play = () => audio.play().catch(() => {});
   play();
-  // Smart TVs às vezes bloqueiam autoplay — tenta no primeiro toque
   document.addEventListener('click', play, { once: true });
 }
 
 async function loadData() {
-  if (SHEET_CSV_URL === 'COLE_AQUI_A_URL_DO_CSV') {
-    document.getElementById('status-msg').textContent =
-      'Configure a URL da planilha no topo do arquivo index.html';
-    return;
-  }
-
   try {
-    const res = await fetch(SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now());
+    const res  = await fetch(SHEET_CSV_URL + '&_=' + Date.now());
     if (!res.ok) throw new Error(res.status);
     const text = await res.text();
-    const rows  = parseCSV(text);
-    const ok    = buildSlides(rows);
-
+    const rows = parseCSV(text);
+    const ok   = buildSlides(rows);
     if (ok) {
       const msg = document.getElementById('status-msg');
       if (msg) msg.remove();
